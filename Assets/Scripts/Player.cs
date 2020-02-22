@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public GameObject downArrow;
 
     GameManager gameManager;
+    Sway sway;
 
     bool isMoving = false;
 
@@ -51,11 +52,18 @@ public class Player : MonoBehaviour
     {
         gameManager = GameObject.FindObjectOfType<GameManager>();
         ShowHideArrows();
+        sway = GetComponentInChildren<Sway>();
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        // if we're in the water, and sway is not active, activate sway.
+        if (y > 0 && sway.enabled == false)
+        {
+            sway.enabled = true;
+        }
 
         if (isMoving) { return; }
 

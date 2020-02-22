@@ -57,7 +57,7 @@ public class Fish : MonoBehaviour
 
     public IEnumerator FadeIn(float duration)
     {
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         Color originalColor = sr.color;
         Color fadeInColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0);
 

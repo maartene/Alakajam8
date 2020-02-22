@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public int depth = 8;
     public DepthLight globalLight;
     public int minFishSpawnDepth = 5;
+    public Transform playerSpawnPoint;
 
     List<Triangle> triangles = new List<Triangle>();
     Player player;
@@ -64,6 +65,12 @@ public class GameManager : MonoBehaviour
                 fish.x = triangle.x;
                 fish.y = triangle.y;
                 fish.transform.position = triangle.targetPosition;
+                if (Random.Range(0.0f, 1.0f) >= 0.5f)
+                {
+                    fish.SetDirection(Fish.Direction.Right);
+                } else {
+                    fish.SetDirection(Fish.Direction.Left);
+                }
                 StartCoroutine(fish.FadeIn(0.5f));
                 fishies.Add(fish);
             }
@@ -118,10 +125,9 @@ public class GameManager : MonoBehaviour
         // Create a first triangle to go down.
         CreateTriangle(1, 1);
 
-        player = Instantiate(playerPrefab, transform) as Player;
+        player = Instantiate(playerPrefab, playerSpawnPoint) as Player;
         player.x = 0;
         player.y = 0;
-        player.transform.position = triangles[0].transform.position;
 
         ConnectTriangles();
     }
@@ -145,6 +151,7 @@ public class GameManager : MonoBehaviour
 
     public void Step()
     {
+        player.transform.parent = null;
 
         foreach (Fish fish in fishies)
         {
@@ -173,6 +180,6 @@ public class GameManager : MonoBehaviour
             }                      
         }
 
-        globalLight.targetIntensity = 0.5f - (player.y * 0.05f);
+        globalLight.targetIntensity = 0.75f - (player.y * 0.1f);
     }
 }

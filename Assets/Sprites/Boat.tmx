@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="5" height="2" tilewidth="70" tileheight="70" infinite="0" nextlayerid="7" nextobjectid="1">
+ <tileset firstgid="1" source="Nautical2.tsx"/>
+ <layer id="5" name="Tile Layer 1" width="5" height="2">
+  <data encoding="csv">
+0,118,0,0,0,
+111,112,114,115,116
+</data>
+ </layer>
+ <layer id="6" name="Tile Layer 2" width="5" height="2">
+  <data encoding="csv">
+0,0,0,0,238,
+0,0,0,0,0
+</data>
+ </layer>
+</map>

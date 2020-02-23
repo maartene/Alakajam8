@@ -15,15 +15,20 @@ public class GameManager : MonoBehaviour
     public float yOffset = 1.0f;
     public Triangle trianglePrefab;
     public Fish[] fishPrefabs;
+    public Fish eelPrefab;
     public Player playerPrefab;
     public int depth = 8;
     public DepthLight globalLight;
     public int minFishSpawnDepth = 5;
+    public int minEelSpawnDepth = 8;
     public Transform playerSpawnPoint;
 
     List<Triangle> triangles = new List<Triangle>();
     Player player;
     public List<Fish> fishies = new List<Fish>();
+    public List<Fish> eels = new List<Fish>();
+
+    public System.Action onStepDone;
 
     public bool CreateTriangle(int x, int y, int vision = 0)
     {
@@ -41,7 +46,8 @@ public class GameManager : MonoBehaviour
             {
                 triangle.transform.position = player.transform.position;
             }
-            StartCoroutine(triangle.MoveTo(new Vector3(x * 0.5f - xOffset, -y * yScale + yOffset, 0)));
+            triangle.targetPosition = new Vector3(x * 0.5f - xOffset, -y * yScale + yOffset, 0);
+            StartCoroutine(triangle.MoveTo());
             //triangle.transform.position = new Vector3(x * 0.5f - xOffset, -y * yScale + yOffset, 0);
             Vector3 scale;
             if (x % 2 == 0)
@@ -59,7 +65,7 @@ public class GameManager : MonoBehaviour
             triangles.Add(triangle);
 
             // small chance of spawning a fish.
-            if (y > minFishSpawnDepth && Random.Range(0, 1.0f) > 0.95f)
+            if (y > minFishSpawnDepth && Random.Range(0, 1.0f) > 0.90f)
             {               
                 Fish fish = Instantiate(fishPrefabs[Random.Range(0, fishPrefabs.Length)], transform);
                 fish.x = triangle.x;
@@ -75,7 +81,24 @@ public class GameManager : MonoBehaviour
                 fishies.Add(fish);
             }
 
-
+            // even smaller chance of spawning an eel.
+            if (y > minEelSpawnDepth && Random.Range(0, 1.0f) > 0.95f)
+            {
+                Fish eel = Instantiate(eelPrefab, transform);
+                eel.x = triangle.x;
+                eel.y = triangle.y;
+                eel.transform.position = triangle.targetPosition;
+                if (Random.Range(0.0f, 1.0f) >= 0.5f)
+                {
+                    eel.SetDirection(Fish.Direction.Right);
+                }
+                else
+                {
+                    eel.SetDirection(Fish.Direction.Left);
+                }
+                StartCoroutine(eel.FadeIn(0.5f));
+                eels.Add(eel);
+            }
         }
 
         if (vision > 0)
@@ -129,10 +152,10 @@ public class GameManager : MonoBehaviour
         player.x = 0;
         player.y = 0;
 
-        ConnectTriangles();
+        //ConnectTriangles();
     }
 
-    void ConnectTriangles()
+    /*void ConnectTriangles()
     {
         foreach (Triangle triangle in triangles)
         {
@@ -147,7 +170,7 @@ public class GameManager : MonoBehaviour
                 triangle.aboveTriangle = getTriangle(triangle.x - 1, triangle.y - 1);
             }
         }
-    }
+    }*/
 
     public void Step()
     {
@@ -178,6 +201,39 @@ public class GameManager : MonoBehaviour
                     fish.SetDirection(Fish.Direction.Right);
                 }
             }                      
+        }
+
+        foreach (Fish eel in eels)
+        {
+            if (eel.direction == Fish.Direction.Right)
+            {
+                Triangle rightTriangle = getTriangle(eel.x + 1, eel.y);
+                if (rightTriangle)
+                {
+                    eel.SetTargetLocation(rightTriangle);
+                }
+                else
+                {
+                    eel.SetDirection(Fish.Direction.Left);
+                }
+            }
+            else
+            {
+                Triangle leftTriangle = getTriangle(eel.x - 1, eel.y);
+                if (leftTriangle)
+                {
+                    eel.SetTargetLocation(leftTriangle);
+                }
+                else
+                {
+                    eel.SetDirection(Fish.Direction.Right);
+                }
+            }
+        }
+
+        if (onStepDone != null)
+        {
+            onStepDone();
         }
 
         globalLight.targetIntensity = 0.75f - (player.y * 0.1f);

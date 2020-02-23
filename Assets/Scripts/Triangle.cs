@@ -27,9 +27,8 @@ public class Triangle : MonoBehaviour
         
     }
 
-    public IEnumerator MoveTo(Vector3 targetPosition)
+    public IEnumerator MoveTo()
     {
-        this.targetPosition = targetPosition;
         Vector3 originalPosition = transform.position;
         float t = 0;
         while (t < 1)

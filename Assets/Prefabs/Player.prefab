@@ -209,7 +209,8 @@ MonoBehaviour:
   x: 0
   y: 0
   speed: 1.5
-  vision: 2
+  vision: 4
+  maxDistanceFromBoat: 50
   leftArrow: {fileID: 20916924379705997}
   rightArrow: {fileID: 366533328352964089}
   upArrow: {fileID: 7770832626996205746}

@@ -23,9 +23,13 @@ public class Fish : MonoBehaviour
 
     public void SetTargetLocation(Triangle triangle)
     {
+        if (triangle == null)
+        {
+            return;
+        }
         x = triangle.x;
         y = triangle.y;
-        StartCoroutine(MoveTo(triangle.transform.position));
+        StartCoroutine(MoveTo(triangle.targetPosition));
     }
 
     public void SetDirection(Direction dir)
